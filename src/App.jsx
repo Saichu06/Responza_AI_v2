@@ -1,10 +1,12 @@
+// src/App.jsx
 import { useEffect, useState } from "react";
 import Navbar from "./components/homepage/Navbar";
 import Home from "./components/homepage/Home";
 import Login from "./Login";
 import Signup from "./Signup";
 import Documentation from "./components/homepage/Documentation";
-import DashboardPage from "./pages/DashboardPage";  // ← ADD THIS IMPORT
+import DashboardPage from "./pages/DashboardPage";
+import LiveDemo from "./components/homepage/LiveDemo";
 
 const css = `
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
@@ -100,7 +102,6 @@ function Footer() {
   );
 }
 
-// App.jsx - Update the navbar condition
 export default function App() {
   const [introDone, setIntroDone] = useState(false);
   const [page, setPage] = useState("home");
@@ -125,11 +126,12 @@ export default function App() {
       {page === "home" && <StatusBar />}
       
       {/* Page Rendering */}
-      {page === "home" && <Home scrollToSection={scrollToSection} />}
-      {page === "dashboard" && <DashboardPage setPage={setPage} />}  {/* ← Pass setPage */}
+      {page === "home" && <Home scrollToSection={scrollToSection} setPage={setPage} />}
+      {page === "dashboard" && <DashboardPage setPage={setPage} />}
       {page === "login" && <Login setPage={setPage} />}
       {page === "signup" && <Signup setPage={setPage} />}
       {page === "documentation" && <Documentation />}
+      {page === "livedemo" && <LiveDemo setPage={setPage} />}
       
       {/* Footer only on home page */}
       {page === "home" && <Footer />}

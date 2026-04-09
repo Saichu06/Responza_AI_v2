@@ -5,7 +5,7 @@ import MapHero from "./MapHero";
 import VideoSection from "./VideoSection";
 import Capabilities from "./Capabilities";
 
-export default function Home({ scrollToSection }) {
+export default function Home({ scrollToSection, setPage }) {
   useEffect(() => {
     if (scrollToSection) {
       const element = document.getElementById(scrollToSection);
@@ -19,7 +19,7 @@ export default function Home({ scrollToSection }) {
 
   return (
     <>
-      <Hero />
+      <Hero setPage={setPage} />
       <div id="map">
         <MapHero />
       </div>

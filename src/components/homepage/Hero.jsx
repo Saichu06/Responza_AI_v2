@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+// src/components/homepage/Hero.jsx
+import { useEffect, useState } from "react";
 
 const css = `
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
@@ -10,9 +11,6 @@ const css = `
 @keyframes ring-spin { from{ stroke-dashoffset:0; } to{ stroke-dashoffset:-220; } }
 @keyframes radar     { from{ transform:rotate(0deg); } to{ transform:rotate(360deg); } }
 @keyframes glitch    { 0%,95%,100%{ clip-path:none; transform:none; } 96%{ clip-path:polygon(0 20%,100% 20%,100% 40%,0 40%); transform:translate(-2px,1px); } 98%{ clip-path:polygon(0 60%,100% 60%,100% 80%,0 80%); transform:translate(2px,-1px); } }
-@keyframes slideRight{ from{ width:0; } to{ width:100%; } }
-@keyframes intro-scan{ 0%{ transform:translateY(-100%); opacity:.6; } 100%{ transform:translateY(100vh); opacity:0; } }
-@keyframes introDone { from{ opacity:1; } to{ opacity:0; pointer-events:none; } }
 .dot-orbit{ position:absolute; top:50%; left:50%; width:8px; height:8px; margin:-4px; border-radius:50%; }
 .dot-orbit.d1{ background:#ff3b5c; animation:orbit  5s linear infinite; box-shadow:0 0 8px #ff3b5c; }
 .dot-orbit.d2{ background:#ffb930; animation:orbit2 7s linear infinite; box-shadow:0 0 8px #ffb930; }
@@ -25,7 +23,6 @@ const css = `
 function GlobeWidget() {
   return (
     <div style={{ position: "relative", width: 340, height: 340, margin: "0 auto" }}>
-      {/* Orbit rings */}
       {[
         { size: 220, color: "rgba(0,255,136,.12)", dash: "4 6" },
         { size: 290, color: "rgba(255,59,92,.1)",  dash: "2 8" },
@@ -41,7 +38,6 @@ function GlobeWidget() {
       <div className="dot-orbit d2" />
       <div className="dot-orbit d3" />
 
-      {/* SVG Globe */}
       <svg width="100%" height="100%" viewBox="0 0 340 340" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <radialGradient id="ggrad" cx="40%" cy="35%">
@@ -72,14 +68,12 @@ function GlobeWidget() {
           <path d="M175,118 L205,118 L215,150 L210,190 L195,205 L178,200 L168,175 L162,150 Z" />
           <path d="M205,75 L260,72 L280,90 L285,115 L265,130 L240,125 L220,115 L208,100 Z" />
           <path d="M248,185 L280,180 L290,200 L280,218 L255,220 L242,205 Z" />
-          <path d="M750,90 L768,85 L775,100 L768,118 L750,120 L740,105 Z" />
         </g>
         <g clipPath="url(#gc)">
           <g id="radar-sweep-g">
             <path d="M170,170 L300,170 A130,130 0 0,0 170,40 Z" fill="url(#glow)" opacity=".35" />
           </g>
         </g>
-        {/* Incident blips */}
         {[
           { cx:258, cy:110, dur:"2s",   color:"#ff3b5c" },
           { cx:218, cy:150, dur:"2.3s", color:"#ff3b5c" },
@@ -148,7 +142,7 @@ function useCountUp(target, delay = 0, duration = 1400) {
   return val;
 }
 
-export default function Hero() {
+export default function Hero({ setPage }) {
   const alerts   = useCountUp(47,    800);
   const regions  = useCountUp(138,   1000);
   const response = useCountUp(830,   1200);
@@ -175,30 +169,37 @@ export default function Hero() {
           </p>
 
           <div style={{ display: "flex", gap: 14, animation: "fadeUp .6s .6s both" }}>
-            {[
-              { label: "Launch Demo",       bg: "#00ff88", color: "#000", border: "none" },
-              { label: "View Documentation",bg: "transparent", color: "#e8f0fe", border: "1px solid #1a2d4a" },
-            ].map(({ label, bg, color, border }) => (
-              <button key={label} style={{ padding: "12px 28px", fontSize: 14, fontWeight: 700, borderRadius: 10, fontFamily: "'Space Grotesk', sans-serif", cursor: "pointer", background: bg, color, border, transition: "all .2s" }}
-                onMouseEnter={(e) => { e.currentTarget.style.transform = "scale(1.03)"; if (bg === "transparent") { e.currentTarget.style.borderColor = "#00ff88"; e.currentTarget.style.color = "#00ff88"; } else { e.currentTarget.style.boxShadow = "0 0 24px rgba(0,255,136,.25)"; } }}
-                onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; if (bg === "transparent") { e.currentTarget.style.borderColor = "#1a2d4a"; e.currentTarget.style.color = "#e8f0fe"; } else { e.currentTarget.style.boxShadow = "none"; } }}
-              >{label}</button>
-            ))}
+            <button 
+              onClick={() => setPage("livedemo")}
+              style={{ padding: "12px 28px", fontSize: 14, fontWeight: 700, borderRadius: 10, fontFamily: "'Space Grotesk', sans-serif", cursor: "pointer", background: "#00ff88", color: "#000", border: "none", transition: "all .2s" }}
+              onMouseEnter={(e) => { e.currentTarget.style.transform = "scale(1.03)"; e.currentTarget.style.boxShadow = "0 0 24px rgba(0,255,136,.25)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = "none"; }}
+            >
+              Launch Demo
+            </button>
+            <button 
+              onClick={() => setPage("documentation")}
+              style={{ padding: "12px 28px", fontSize: 14, fontWeight: 700, borderRadius: 10, fontFamily: "'Space Grotesk', sans-serif", cursor: "pointer", background: "transparent", color: "#e8f0fe", border: "1px solid #1a2d4a", transition: "all .2s" }}
+              onMouseEnter={(e) => { e.currentTarget.style.transform = "scale(1.03)"; e.currentTarget.style.borderColor = "#00ff88"; e.currentTarget.style.color = "#00ff88"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.borderColor = "#1a2d4a"; e.currentTarget.style.color = "#e8f0fe"; }}
+            >
+              View Documentation
+            </button>
           </div>
 
           <div style={{ display: "flex", gap: 32, marginTop: 40, animation: "fadeUp .6s .7s both" }}>
-            {[
-              { val: alerts,                 label: "ACTIVE ALERTS" },
-              { val: regions,                label: "REGIONS COVERED" },
-              { val: response, suffix: "ms", label: "AVG RESPONSE TIME" },
-            ].map(({ val, label, suffix }) => (
-              <div key={label}>
-                <div style={{ fontSize: 26, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", color: "#e8f0fe" }}>
-                  {val}{suffix && <span style={{ fontSize: 14 }}>{suffix}</span>}
-                </div>
-                <div style={{ fontSize: 11, color: "#4a6080", marginTop: 2, letterSpacing: .5 }}>{label}</div>
-              </div>
-            ))}
+            <div>
+              <div style={{ fontSize: 26, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", color: "#e8f0fe" }}>{alerts}</div>
+              <div style={{ fontSize: 11, color: "#4a6080", marginTop: 2, letterSpacing: .5 }}>ACTIVE ALERTS</div>
+            </div>
+            <div>
+              <div style={{ fontSize: 26, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", color: "#e8f0fe" }}>{regions}</div>
+              <div style={{ fontSize: 11, color: "#4a6080", marginTop: 2, letterSpacing: .5 }}>REGIONS COVERED</div>
+            </div>
+            <div>
+              <div style={{ fontSize: 26, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", color: "#e8f0fe" }}>{response}<span style={{ fontSize: 14 }}>ms</span></div>
+              <div style={{ fontSize: 11, color: "#4a6080", marginTop: 2, letterSpacing: .5 }}>AVG RESPONSE TIME</div>
+            </div>
           </div>
         </div>
 
