@@ -1,3 +1,4 @@
+// src/services/openMeteo.js
 const BASE_URL = "https://api.open-meteo.com/v1/forecast";
 const GEO_URL  = "https://geocoding-api.open-meteo.com/v1/search";
 
@@ -24,15 +25,29 @@ export const getWeatherBatch = async (locations) => {
     .map((r) => r.value);
 };
 
+// Search city by name — returns [{name, lat, lon, country}]
+export const searchCity = async (query) => {
+  const res = await fetch(`${GEO_URL}?name=${encodeURIComponent(query)}&count=5&language=en&format=json`);
+  if (!res.ok) throw new Error("Geocoding failed");
+  const data = await res.json();
+  return (data.results || []).map((r) => ({
+    name: r.name,
+    country: r.country,
+    lat: r.latitude,
+    lon: r.longitude,
+    display: `${r.name}, ${r.country}`,
+  }));
+};
+
 // Map Open-Meteo weather codes to disaster risk
 export const weatherCodeToRisk = (code, windspeed, precip) => {
-  if (code >= 95)                          return { type: "Thunderstorm", sev: "critical", color: "#ff3b5c" };
-  if (code >= 80 || precip > 20)           return { type: "Flood Risk",   sev: "high",     color: "#ffb930" };
-  if (windspeed > 70)                      return { type: "Storm",        sev: "critical", color: "#ff3b5c" };
-  if (windspeed > 45)                      return { type: "High Winds",   sev: "high",     color: "#ffb930" };
-  if (code >= 71 && code <= 77)            return { type: "Blizzard",     sev: "high",     color: "#ffb930" };
-  if (code >= 51 && code <= 67)            return { type: "Heavy Rain",   sev: "medium",   color: "#4d9fff" };
-  return                                          { type: "Clear",        sev: "low",      color: "#00ff88" };
+  if (code >= 95)                 return { type: "Thunderstorm", sev: "critical", color: "#ff3b5c" };
+  if (code >= 80 || precip > 20)  return { type: "Flood Risk",   sev: "high",     color: "#ffb930" };
+  if (windspeed > 70)             return { type: "Storm",        sev: "critical", color: "#ff3b5c" };
+  if (windspeed > 45)             return { type: "High Winds",   sev: "high",     color: "#ffb930" };
+  if (code >= 71 && code <= 77)   return { type: "Blizzard",     sev: "high",     color: "#ffb930" };
+  if (code >= 51 && code <= 67)   return { type: "Heavy Rain",   sev: "medium",   color: "#4d9fff" };
+  return                                 { type: "Clear",        sev: "low",      color: "#00ff88" };
 };
 
 export const WMO_CODES = {

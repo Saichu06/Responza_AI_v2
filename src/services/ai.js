@@ -1,20 +1,69 @@
-const HF_API = "https://api-inference.huggingface.co/models";
+// src/services/ai.js
+// Uses Anthropic API for context-aware disaster intelligence
 
-// Uses a free summarization model - no API key needed for limited use
-export const getAIInsight = async (alertSummary) => {
+export const getAIInsight = async (alertSummary, locationContext = null) => {
   try {
-    const res = await fetch(`${HF_API}/facebook/bart-large-cnn`, {
+    const locationPart = locationContext
+      ? `\nUser location context: ${locationContext}`
+      : "";
+
+    const systemPrompt = `You are an expert disaster response coordinator AI. 
+Analyze emergency alerts and provide concise, actionable intelligence briefings.
+Keep responses under 120 words. Be direct, use bullet points when listing actions.
+Always prioritize life safety over property.`;
+
+    const userPrompt = `Current emergency situation:
+${alertSummary}${locationPart}
+
+Provide:
+1. Threat assessment (1-2 sentences)
+2. Immediate actions (2-3 bullets)
+3. Resource priorities (1 sentence)`;
+
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        inputs: `Disaster response briefing: ${alertSummary}. Provide actionable emergency response recommendations.`,
-        parameters: { max_length: 150, min_length: 50 },
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        system: systemPrompt,
+        messages: [{ role: "user", content: userPrompt }],
       }),
     });
-    const data = await res.json();
-    return data[0]?.summary_text ?? generateLocalInsight(alertSummary);
+
+    const data = await response.json();
+    const text = data.content?.map((b) => b.text || "").join("\n").trim();
+    return text || generateLocalInsight(alertSummary);
   } catch {
     return generateLocalInsight(alertSummary);
+  }
+};
+
+export const getCityWeatherInsight = async (cityName, weatherData) => {
+  try {
+    const temp = weatherData?.current_weather?.temperature;
+    const wind = weatherData?.current_weather?.windspeed;
+    const code = weatherData?.current_weather?.weathercode;
+
+    const prompt = `City: ${cityName}
+Current weather: temp=${temp}°C, wind=${wind}km/h, weather_code=${code}
+
+Give a 2-sentence emergency preparedness tip for residents based on this weather. Be specific and actionable.`;
+
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        messages: [{ role: "user", content: prompt }],
+      }),
+    });
+
+    const data = await response.json();
+    return data.content?.[0]?.text?.trim() || null;
+  } catch {
+    return null;
   }
 };
 
@@ -22,54 +71,49 @@ export const getAIInsight = async (alertSummary) => {
 const generateLocalInsight = (summary) => {
   const lower = summary.toLowerCase();
   if (lower.includes("flood"))
-    return "Deploy water rescue units. Evacuate low-lying areas immediately. Activate emergency shelters at elevated locations. Monitor river levels every 30 minutes.";
+    return "⚠️ Flood Risk Detected\n\n• Deploy water rescue units immediately\n• Evacuate all low-lying areas\n• Activate elevated emergency shelters\n\nMonitor river levels every 30 minutes. Prioritize elderly and mobility-impaired residents.";
   if (lower.includes("fire") || lower.includes("wildfire"))
-    return "Establish firebreak perimeters. Coordinate air support for water drops. Issue mandatory evacuation orders for 10km radius. Alert respiratory health centers.";
+    return "🔥 Wildfire Threat Active\n\n• Establish firebreak perimeters now\n• Coordinate air support for water drops\n• Issue mandatory evacuation for 10km radius\n\nAlert respiratory health centers. Distribute N95 masks at staging areas.";
   if (lower.includes("cyclone") || lower.includes("typhoon"))
-    return "Activate coastal evacuation protocols. Secure port infrastructure. Pre-position emergency medical teams. Estimated landfall window: 6–12 hours.";
+    return "🌀 Cyclonic System Approaching\n\n• Activate coastal evacuation protocols\n• Secure all port infrastructure\n• Pre-position emergency medical teams\n\nEstimated landfall window: 6–12 hours. All shelters must be at capacity before landfall.";
   if (lower.includes("earthquake"))
-    return "Deploy urban search and rescue (USAR) teams. Assess structural damage to critical infrastructure. Set up field hospitals. Check gas and water lines.";
+    return "🏚️ Seismic Event Response\n\n• Deploy USAR teams to collapse zones\n• Assess structural integrity of critical infrastructure\n• Establish field hospitals at safe distances\n\nShut off gas mains. Check water line integrity before resuming supply.";
   if (lower.includes("tsunami"))
-    return "IMMEDIATE coastal evacuation. Move inland minimum 3km. Alert maritime authorities. Monitor DART buoy network for wave height data.";
+    return "🌊 TSUNAMI IMMINENT\n\n• IMMEDIATE coastal evacuation — move inland 3km+\n• Alert all maritime authorities\n• Monitor DART buoy network for wave height\n\nDo not return to coast until all-clear issued by official authorities.";
   if (lower.includes("heat"))
-    return "Open cooling centers across the city. Increase EMS capacity. Issue public health advisory. Monitor vulnerable populations — elderly and children first.";
-  return "Monitor situation. Mobilize rapid response teams. Coordinate with local emergency management authorities. Prepare resource deployment manifest.";
+    return "🌡️ Extreme Heat Advisory\n\n• Open cooling centers across all districts\n• Increase EMS capacity by 40%\n• Issue public health advisory via all channels\n\nPrioritize monitoring elderly, infants, and outdoor workers. Hydration stations at transit hubs.";
+  return "📡 Monitoring Active\n\n• Mobilize rapid response teams to standby\n• Coordinate with local emergency management\n• Prepare resource deployment manifest\n\nContinue monitoring. Escalate if conditions deteriorate.";
 };
 
 export const buildAlertSummary = (alerts) => {
   const critical = alerts.filter((a) => a.sev === "critical");
-  if (!critical.length) return "No critical alerts at this time.";
-  return critical
-    .map((a) => `${a.type} at ${a.name}: ${a.description}, wind ${a.wind}, precip ${a.precip}`)
-    .join(". ");
+  const high = alerts.filter((a) => a.sev === "high");
+
+  if (!critical.length && !high.length) return "No critical or high-severity alerts at this time.";
+
+  const lines = [];
+  if (critical.length) {
+    lines.push(`CRITICAL (${critical.length}): ` +
+      critical.map((a) => `${a.type} at ${a.name} — wind ${a.wind}, precip ${a.precip}`).join("; ")
+    );
+  }
+  if (high.length) {
+    lines.push(`HIGH (${high.length}): ` +
+      high.map((a) => `${a.type} at ${a.name}`).join("; ")
+    );
+  }
+  return lines.join("\n");
 };
 
-
 export const getPersonalizedRecommendation = (weatherData) => {
-  if (!weatherData || !weatherData.current_weather) return null;
-  
-  const temp = weatherData.current_weather.temperature;
-  const wind = weatherData.current_weather.windspeed;
-  const code = weatherData.current_weather.weathercode;
-  
-  if (temp > 35) {
-    return "🌡️ HEAT ALERT: Extreme temperatures in your area. Stay hydrated, avoid outdoor activities between 11 AM-4 PM, and check on elderly neighbors.";
-  }
-  if (temp < 5) {
-    return "❄️ COLD ALERT: Freezing conditions detected. Dress in layers, protect pipes from freezing, and drive with caution on potentially icy roads.";
-  }
-  if (wind > 70) {
-    return "💨 HIGH WIND WARNING: Strong winds in your area. Secure outdoor objects, avoid unnecessary travel, and stay away from trees and power lines.";
-  }
-  if (code >= 95) {
-    return "⛈️ THUNDERSTORM WARNING: Severe weather approaching your location. Stay indoors, unplug electronics, and avoid using landlines until the storm passes.";
-  }
-  if (code >= 61 && code <= 67) {
-    return "🌧️ HEAVY RAIN ALERT: Significant rainfall expected. Be aware of flash flooding, avoid driving through flooded roads, and move to higher ground if necessary.";
-  }
-  if (code >= 71 && code <= 77) {
-    return "🌨️ SNOW ALERT: Winter weather affecting your area. Drive with extreme caution, keep emergency supplies in your vehicle, and limit non-essential travel.";
-  }
-  
+  if (!weatherData?.current_weather) return null;
+  const { temperature: temp, windspeed: wind, weathercode: code } = weatherData.current_weather;
+
+  if (temp > 35) return "🌡️ HEAT ALERT: Extreme temperatures detected. Stay hydrated, avoid outdoor activity 11AM–4PM, check on elderly neighbors.";
+  if (temp < 5)  return "❄️ COLD ALERT: Freezing conditions. Dress in layers, protect pipes, drive cautiously on icy roads.";
+  if (wind > 70) return "💨 HIGH WIND WARNING: Secure outdoor objects, avoid travel, stay away from trees and power lines.";
+  if (code >= 95) return "⛈️ THUNDERSTORM WARNING: Stay indoors, unplug electronics, avoid landlines until storm passes.";
+  if (code >= 61 && code <= 67) return "🌧️ HEAVY RAIN ALERT: Flash flooding possible. Avoid flooded roads, move to higher ground if needed.";
+  if (code >= 71 && code <= 77) return "🌨️ SNOW ALERT: Drive with extreme caution, keep emergency supplies in vehicle, limit non-essential travel.";
   return null;
 };
