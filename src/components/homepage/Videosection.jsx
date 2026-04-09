@@ -1,16 +1,13 @@
 import { useState } from "react";
 
-// Import your video files - MAKE SURE THESE PATHS ARE CORRECT
-import earthquakeVideo from "/earthquake.mp4";
-import floodVideo from "/tsunami.mp4";
-import stormVideo from "/storm.mp4";
-
+// ✅ REPLACE THESE WITH YOUR CLOUDINARY URLs
+// Get your Cloudinary video URLs from https://cloudinary.com
 const VIDEOS = [
   {
     id: "earthquake",
     title: "Earthquake Response",
     description: "Seismic detection & AI-guided evacuation routing",
-    videoSrc: earthquakeVideo,
+    videoSrc: "https://res.cloudinary.com/dur7ndvl2/video/upload/v1775762720/14642924_3840_2160_60fps_dgnz39.mp4",
     severity: "Critical",
     color: "#ef4444",
   },
@@ -18,7 +15,7 @@ const VIDEOS = [
     id: "flood",
     title: "Flood Monitoring",
     description: "Water surge tracking & automated resource dispatch",
-    videoSrc: floodVideo,
+    videoSrc: "https://res.cloudinary.com/dur7ndvl2/video/upload/v1775762360/tsunami_ejc893.mp4",
     severity: "High",
     color: "#f97316",
   },
@@ -26,7 +23,7 @@ const VIDEOS = [
     id: "storm",
     title: "Storm Detection",
     description: "Real-time storm tracking & predictive path analysis",
-    videoSrc: stormVideo,
+    videoSrc: "https://res.cloudinary.com/dur7ndvl2/video/upload/v1775762407/storm_yoh7or.mp4",
     severity: "High",
     color: "#f97316",
   },
@@ -193,6 +190,9 @@ export default function VideoSection() {
                     </span>
                     <span style={{ color: "#6b7280", fontSize: "12px", fontFamily: "'Inter', sans-serif" }}>
                       Preview coming soon
+                    </span>
+                    <span style={{ color: "#6b7280", fontSize: "10px", fontFamily: "'Inter', sans-serif", wordBreak: "break-all", maxWidth: "90%", textAlign: "center" }}>
+                      Add video to Cloudinary and update URL
                     </span>
                   </div>
                 )}

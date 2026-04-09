@@ -1250,7 +1250,12 @@ function ProfileDropdown({ onClose, userLocation }) {
         )}
       </div>
 
-      <FieldRow label="USERNAME" value={username} fieldKey="username" icon="◈" />
+      <FieldRow
+        label="USERNAME"
+        value={username}
+        fieldKey="username"
+        icon="◈"
+      />
       <FieldRow label="EMAIL" value={email} fieldKey="email" icon="✉" />
       <FieldRow
         label="LOCATION"
@@ -1481,7 +1486,20 @@ function TopNavbar({
                 fontSize: 13,
               }}
             >
-              ⚡
+              <img
+                src="/logo.png"
+                alt="Logo"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "contain",
+                  borderRadius: 6,
+                }}
+                onError={(e) => {
+                  e.target.style.display = "none";
+                  e.target.parentElement.innerHTML = "⚡";
+                }}
+              />
             </div>
             <span
               style={{

@@ -45,8 +45,11 @@ export default function LiveDemo({ setPage }) {
   const [videoError, setVideoError] = useState(false);
   const videoRef = useRef(null);
 
-  // Your video file directly in public folder
-  const DEMO_VIDEO_URL = "/demo-video.mp4";
+  // ✅ REPLACE THIS URL WITH YOUR CLOUDINARY URL
+  const DEMO_VIDEO_URL = "https://res.cloudinary.com/dur7ndvl2/video/upload/v1775762240/demo-video_tbzjmt.mp4";
+
+  // Example Cloudinary URL format:
+  // const DEMO_VIDEO_URL = "https://res.cloudinary.com/demo/video/upload/sample.mp4";
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -131,7 +134,7 @@ export default function LiveDemo({ setPage }) {
             <span style={{ fontSize: "48px", display: "block", marginBottom: "12px" }}>🎬</span>
             <h3 style={{ color: "#ff3b5c", marginBottom: "8px" }}>Video Not Found</h3>
             <p style={{ color: "#4a6080" }}>
-              Please add your demo video to <code style={{ background: "#1a2d4a", padding: "2px 6px", borderRadius: "4px" }}>/public/demo-video.mp4</code>
+              Please check your Cloudinary URL. Current URL: <code style={{ background: "#1a2d4a", padding: "2px 6px", borderRadius: "4px", wordBreak: "break-all" }}>{DEMO_VIDEO_URL}</code>
             </p>
             <button
               onClick={() => setPage("home")}
