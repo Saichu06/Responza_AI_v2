@@ -26,3 +26,5 @@ public/earthquake.mp4
 public/storm.mp4
 public/tsunami.mp4
 *.mp4
+
+.env
