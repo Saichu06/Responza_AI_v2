@@ -13,7 +13,7 @@ import MapView from "../components/dashboard/MapView";
 import AlertPanel from "../components/dashboard/AlertPanel";
 import IncidentPanel from "../components/dashboard/IncidentPanel";
 import AIInsights from "../components/dashboard/AIInsights";
-import AIChat from "../components/dashboard/AIChat";
+import AIChat from "../components/dashboard/AICHAT";
 
 /* ─────────────────────────────────────────────────────────────────────────
    THEME CONTEXT  — supports dark + light

@@ -2,7 +2,7 @@
 import { useEffect } from "react";
 import Hero from "./Hero";
 import MapHero from "./MapHero";
-import VideoSection from "./VideoSection";
+import VideoSection from "./Videosection";
 import Capabilities from "./Capabilities";
 
 export default function Home({ scrollToSection, setPage }) {
