@@ -148,39 +148,51 @@ const mono = "'Space Mono', monospace";
    CITY DATABASE for search
 ───────────────────────────────────────────────────────────────────────── */
 const CITY_LIST = [
-  { name: "Mumbai", lat: 19.076, lng: 72.877 },
-  { name: "Delhi", lat: 28.704, lng: 77.103 },
-  { name: "Chennai", lat: 13.083, lng: 80.271 },
-  { name: "Bangalore", lat: 12.971, lng: 77.594 },
-  { name: "Kolkata", lat: 22.573, lng: 88.364 },
-  { name: "Hyderabad", lat: 17.385, lng: 78.487 },
-  { name: "Pune", lat: 18.52, lng: 73.857 },
-  { name: "Ahmedabad", lat: 23.023, lng: 72.572 },
-  { name: "Jaipur", lat: 26.922, lng: 75.779 },
-  { name: "New York", lat: 40.713, lng: -74.006 },
-  { name: "Los Angeles", lat: 34.052, lng: -118.244 },
-  { name: "Chicago", lat: 41.878, lng: -87.63 },
-  { name: "London", lat: 51.507, lng: -0.128 },
-  { name: "Paris", lat: 48.856, lng: 2.352 },
-  { name: "Berlin", lat: 52.52, lng: 13.405 },
-  { name: "Tokyo", lat: 35.69, lng: 139.692 },
-  { name: "Beijing", lat: 39.904, lng: 116.407 },
-  { name: "Shanghai", lat: 31.228, lng: 121.474 },
-  { name: "Sydney", lat: -33.869, lng: 151.209 },
-  { name: "Dubai", lat: 25.205, lng: 55.271 },
-  { name: "Singapore", lat: 1.352, lng: 103.82 },
-  { name: "São Paulo", lat: -23.55, lng: -46.634 },
-  { name: "Lagos", lat: 6.455, lng: 3.384 },
-  { name: "Nairobi", lat: -1.286, lng: 36.817 },
-  { name: "Cairo", lat: 30.033, lng: 31.233 },
-  { name: "Istanbul", lat: 41.015, lng: 28.979 },
-  { name: "Karachi", lat: 24.861, lng: 67.011 },
-  { name: "Jakarta", lat: -6.175, lng: 106.827 },
-  { name: "Manila", lat: 14.6, lng: 120.984 },
-  { name: "Bangkok", lat: 13.756, lng: 100.502 },
-  { name: "Mexico City", lat: 19.433, lng: -99.133 },
+  // Asia Pacific
+  { name: "Tokyo", lat: 35.68, lng: 139.69 },
+  { name: "Chennai", lat: 13.08, lng: 80.27 },
+  { name: "Mumbai", lat: 19.08, lng: 72.88 },
+  { name: "Shanghai", lat: 31.23, lng: 121.47 },
+  { name: "Delhi", lat: 28.61, lng: 77.21 },
+  { name: "Bangkok", lat: 13.73, lng: 100.50 },
+  { name: "Jakarta", lat: -6.17, lng: 106.83 },
+  { name: "Manila", lat: 14.60, lng: 120.98 },
+  { name: "Seoul", lat: 37.57, lng: 126.98 },
+  { name: "Singapore", lat: 1.35, lng: 103.82 },
+  { name: "Karachi", lat: 24.86, lng: 67.01 },
+  { name: "Beijing", lat: 39.90, lng: 116.40 },
+  
+  // North America
+  { name: "San Francisco", lat: 37.77, lng: -122.40 },
+  { name: "Los Angeles", lat: 34.05, lng: -118.24 },
+  { name: "New York", lat: 40.71, lng: -74.01 },
+  { name: "Miami", lat: 25.76, lng: -80.19 },
+  { name: "Vancouver", lat: 49.28, lng: -123.12 },
+  { name: "Mexico City", lat: 19.43, lng: -99.13 },
+  
+  // Europe
+  { name: "London", lat: 51.51, lng: -0.13 },
+  { name: "Paris", lat: 48.86, lng: 2.35 },
+  { name: "Berlin", lat: 52.52, lng: 13.41 },
+  { name: "Rome", lat: 41.90, lng: 12.50 },
+  
+  // Australia
+  { name: "Sydney", lat: -33.87, lng: 151.21 },
+  { name: "Brisbane", lat: -27.47, lng: 153.03 },
+  { name: "Perth", lat: -31.95, lng: 115.86 },
+  
+  // South America
+  { name: "São Paulo", lat: -23.55, lng: -46.63 },
+  { name: "Rio", lat: -22.91, lng: -43.17 },
+  
+  // Africa
+  { name: "Cape Town", lat: -33.92, lng: 18.42 },
+  { name: "Nairobi", lat: -1.29, lng: 36.82 },
+  { name: "Cairo", lat: 30.04, lng: 31.24 },
+  
+  // Original
+  { name: "Bali", lat: -8.34, lng: 115.09 },
 ];
-
 /* ─────────────────────────────────────────────────────────────────────────
    GEOLOCATION HOOK
 ───────────────────────────────────────────────────────────────────────── */
